@@ -1,8 +1,8 @@
-use std::{fmt, str::FromStr};
-
-use clap::Parser;
-
 use super::verify_file;
+use crate::{process_decode, process_encode, CmdExector};
+use anyhow::Result;
+use clap::Parser;
+use std::{fmt, str::FromStr};
 
 #[derive(Debug, Parser)]
 pub enum Base64SubCommand {
@@ -62,5 +62,33 @@ impl From<Base64Format> for &'static str {
 impl fmt::Display for Base64Format {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", Into::<&str>::into(*self))
+    }
+}
+
+impl CmdExector for Base64EncodeOpts {
+    async fn execute(self) -> Result<()> {
+        // let mut input = get_reader(&self.input)?;
+        let output = process_encode(&self.input, self.format)?;
+        print!("{}", output);
+        Ok(())
+    }
+}
+
+impl CmdExector for Base64DecodeOpts {
+    async fn execute(self) -> Result<()> {
+        // let mut input = get_reader(&self.input)?;
+        let output = process_decode(&self.input, self.format)?;
+        print!("{}", String::from_utf8(output)?);
+        Ok(())
+    }
+}
+
+impl CmdExector for Base64SubCommand {
+    async fn execute(self) -> Result<()> {
+        match self {
+            Base64SubCommand::Encode(opts) => opts.execute().await?,
+            Base64SubCommand::Decode(opts) => opts.execute().await?,
+        }
+        Ok(())
     }
 }
