@@ -30,17 +30,6 @@ pub struct CsvOpts {
     pub header: bool,
 }
 
-impl CmdExector for CsvOpts {
-    async fn execute(self) -> anyhow::Result<()> {
-        let output = if let Some(output) = self.output {
-            output
-        } else {
-            format!("output.{}", self.format)
-        };
-        process_csv(&self.input, output, self.format)
-    }
-}
-
 pub fn parse_format(format: &str) -> Result<OutputFormat, anyhow::Error> {
     //format.parse().map_err(|e : anyhow::Error| e.to_string());
     format.parse()
@@ -72,5 +61,16 @@ impl FromStr for OutputFormat {
 impl fmt::Display for OutputFormat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", Into::<&str>::into(*self))
+    }
+}
+
+impl CmdExector for CsvOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let output = if let Some(output) = self.output {
+            output
+        } else {
+            format!("output.{}", self.format)
+        };
+        process_csv(&self.input, output, self.format)
     }
 }
