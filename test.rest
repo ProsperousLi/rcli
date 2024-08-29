@@ -1,0 +1,11 @@
+### test static file
+
+GET http://localhost:8080/fixtures/blake3.txt
+
+
+### test static file whit *path
+GET http://localhost:8080/Cargo.toml
+
+### test static file with tower-http
+GET http://localhost:8080/tower/fixtures/blake3.txt
+Range: bytes=0-
